@@ -272,10 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .primary
-                      .withValues(alpha: 0.2),
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                 ),
                 child: Center(
                   child: Text(
@@ -393,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .primary
-                              .withValues(alpha: 0.1),
+                              .withOpacity(0.1),
                         ),
                       ),
                     ],
@@ -439,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: entry.mood.colorValue.withValues(alpha: 0.2),
+                        color: entry.mood.colorValue.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
