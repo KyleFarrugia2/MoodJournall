@@ -40,6 +40,7 @@ class NotificationService {
 
       await _requestPermissions();
     } catch (e) {
+      debugPrint('Notification initialization error: $e');
     }
   }
 
