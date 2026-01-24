@@ -49,9 +49,11 @@ jobs:
       
       - name: Get dependencies
         run: flutter pub get
+        continue-on-error: false
       
       - name: Build Windows
         run: flutter build windows --release
+        continue-on-error: false
       
       - name: Upload Windows build artifact
         uses: actions/upload-artifact@v4
