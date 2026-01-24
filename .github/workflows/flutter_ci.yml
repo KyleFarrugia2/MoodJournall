@@ -1,0 +1,177 @@
+# GitHub Actions CI/CD Workflow for Flutter Application
+# This implements A&A5 - CI/CD Pipeline
+
+name: Flutter CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  # Job 1: Code Analysis and Linting
+  analyze:
+    name: Code Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Verify formatting
+        run: flutter format --set-exit-if-changed .
+      
+      - name: Analyze code
+        run: flutter analyze
+      
+      - name: Run tests
+        run: flutter test
+
+  # Job 2: Build Windows (No Java Required)
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: analyze
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build Windows
+        run: flutter build windows --release
+      
+      - name: Upload Windows build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/x64/runner/Release
+          retention-days: 30
+
+  # Job 2b: Build Android APK (Optional - Requires Java)
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    needs: analyze
+    if: false  # Set to true if you want Android builds
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build APK
+        run: flutter build apk --release
+      
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+  # Job 3: Build iOS (macOS required)
+  build-ios:
+    name: Build iOS
+    runs-on: macos-latest
+    needs: analyze
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build iOS (without code signing)
+        run: flutter build ios --release --no-codesign
+      
+      - name: Upload iOS build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 30
+
+  # Job 4: Build Web
+  build-web:
+    name: Build Web
+    runs-on: ubuntu-latest
+    needs: analyze
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Enable web support
+        run: flutter config --enable-web
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build Web
+        run: flutter build web --release
+      
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web
+          retention-days: 30
+
+# Workflow Description:
+# This CI/CD pipeline automatically runs when code is pushed or pull requests are created.
+# It performs the following actions:
+# 1. Code Analysis: Checks code formatting, runs static analysis, and executes tests
+# 2. Windows Build: Creates a release build for Windows (NO JAVA REQUIRED)
+# 3. Web Build: Creates a production web build (NO JAVA REQUIRED)
+# 4. Android Build: Optional - Creates a release APK (requires Java, disabled by default)
+# 5. iOS Build: Creates a release build for iOS (requires macOS runner)
+#
+# Benefits:
+# - Catches errors early in the development process
+# - Ensures code quality standards are maintained
+# - Automatically builds deployable artifacts
+# - Provides fast feedback to developers
+# - Supports multiple platforms simultaneously
+# - Windows and Web builds work WITHOUT Java installation

@@ -1,0 +1,48 @@
+name: homeassignment
+description: "MoodJournal - A beautiful daily journal and mood tracking application"
+publish_to: 'none'
+version: 2.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Advanced State Management
+  provider: ^6.1.0
+  
+  # Local Persistent Storage
+  sqflite: ^2.3.0
+  sqflite_common_ffi: ^2.3.0  # Windows/Linux/Web support
+  path: ^1.8.0
+  path_provider: ^2.1.0  # For Windows path support
+  
+  # GPS/Location
+  geolocator: ^10.1.0
+  
+  # Local Notifications
+  flutter_local_notifications: ^16.3.0
+  timezone: ^0.9.0
+  
+  # Firebase Analytics
+  firebase_core: ^2.32.0
+  firebase_analytics: ^10.7.0
+  
+  # Date formatting
+  intl: ^0.19.0
+  
+  # Charts for mood visualization
+  fl_chart: ^0.66.0
+  
+  # Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

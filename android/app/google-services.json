@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "463573837548",
+    "project_id": "tasktracker-96e5a",
+    "storage_bucket": "tasktracker-96e5a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463573837548:android:1bb35e76d432eff7bf27c9",
+        "android_client_info": {
+          "package_name": "com.example.homeassignment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg42udvCDXjwXZkBDzWZ7MnyzZTNivy-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463573837548:android:808d98789e728b57bf27c9",
+        "android_client_info": {
+          "package_name": "com.moodjournal.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg42udvCDXjwXZkBDzWZ7MnyzZTNivy-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
