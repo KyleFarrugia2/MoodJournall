@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'providers/journal_provider.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
@@ -14,13 +15,15 @@ void main() async {
   await DatabaseHelper.initializeDatabaseFactory();
 
   try {
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (kIsWeb ||
+        (!kIsWeb &&
+            (Platform.isWindows || Platform.isLinux || Platform.isMacOS))) {
+      debugPrint('Firebase Analytics not available on desktop/web platforms');
+      debugPrint('App will work without Firebase on desktop platforms');
+    } else if (Platform.isAndroid || Platform.isIOS) {
       await Firebase.initializeApp();
       debugPrint('Firebase initialized successfully');
       debugPrint('Firebase is connected and ready');
-    } else {
-      debugPrint('Firebase Analytics not available on Windows/Web/Linux');
-      debugPrint('App will work without Firebase on desktop platforms');
     }
   } catch (e) {
     debugPrint('Firebase initialization failed: $e');
