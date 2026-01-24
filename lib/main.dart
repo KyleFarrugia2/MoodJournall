@@ -13,16 +13,18 @@ void main() async {
 
   await DatabaseHelper.initializeDatabaseFactory();
 
-  if (Platform.isAndroid || Platform.isIOS) {
-    try {
+  try {
+    if (Platform.isAndroid || Platform.isIOS) {
       await Firebase.initializeApp();
       debugPrint('Firebase initialized successfully');
-    } catch (e) {
-      debugPrint('Firebase initialization skipped (optional): $e');
-      debugPrint('App will continue without Firebase Analytics');
+      debugPrint('Firebase is connected and ready');
+    } else {
+      debugPrint('Firebase Analytics not available on Windows/Web/Linux');
+      debugPrint('App will work without Firebase on desktop platforms');
     }
-  } else {
-    debugPrint('Firebase Analytics not available on Windows/Web/Linux');
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+    debugPrint('App will continue without Firebase Analytics');
   }
 
   await NotificationService.instance.initialize();

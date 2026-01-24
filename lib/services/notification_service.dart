@@ -76,7 +76,7 @@ class NotificationService {
       await _notifications.zonedSchedule(
         999,
         'Daily Journal Reminder',
-        'Don\'t forget to write in your journal today! 📔',
+        'Don\'t forget to write in your journal today!',
         tzDateTime,
         const NotificationDetails(
           android: AndroidNotificationDetails(

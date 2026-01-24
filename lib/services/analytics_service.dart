@@ -1,6 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show debugPrint;
 import '../models/journal_entry.dart';
 
 class AnalyticsService {
@@ -10,18 +9,29 @@ class AnalyticsService {
   AnalyticsService._init();
 
   Future<void> initialize() async {
-    if (kIsWeb || (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS))) {
-      debugPrint('Firebase Analytics not available on desktop/web platforms');
-      _analytics = null;
-      return;
-    }
     try {
       _analytics = FirebaseAnalytics.instance;
       debugPrint('Firebase Analytics initialized successfully');
+      debugPrint('Analytics service is ready to track events');
+      
+      try {
+        await _analytics!.logEvent(name: 'app_opened');
+        debugPrint('Test analytics event sent successfully');
+      } catch (e) {
+        debugPrint('Could not send test event: $e');
+      }
     } catch (e) {
       debugPrint('Firebase Analytics initialization failed: $e');
       debugPrint('Analytics events will not be tracked');
       _analytics = null;
+    }
+  }
+  
+  bool get isConnected {
+    try {
+      return _analytics != null;
+    } catch (e) {
+      return false;
     }
   }
 

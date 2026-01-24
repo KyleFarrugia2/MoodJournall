@@ -287,7 +287,7 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? mood.colorValue.withOpacity(0.2)
+                                      ? mood.colorValue.withValues(alpha: 0.2)
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(

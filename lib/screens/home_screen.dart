@@ -88,6 +88,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     actions: [
                       Semantics(
+                        label: 'Firebase connection status',
+                        child: Builder(
+                          builder: (context) {
+                            final isConnected = AnalyticsService.instance.isConnected;
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                isConnected ? Icons.cloud_done : Icons.cloud_off,
+                                color: isConnected ? Colors.green : Colors.grey,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Semantics(
                         label: 'Test notification button',
                         button: true,
                         child: IconButton(
@@ -254,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                 ),
                 child: Center(
                   child: Text(
@@ -372,7 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Theme.of(context)
                               .colorScheme
                               .primary
-                              .withOpacity(0.1),
+                              .withValues(alpha: 0.1),
                         ),
                       ),
                     ],
@@ -418,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: entry.mood.colorValue.withOpacity(0.2),
+                        color: entry.mood.colorValue.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -511,9 +526,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Semantics(
             label: 'Journal icon',
-            child: Text(
-              '📔',
-              style: const TextStyle(fontSize: 80),
+            child: Icon(
+              Icons.book,
+              size: 80,
+              color: Colors.grey[400],
             ),
           ),
           const SizedBox(height: 16),
@@ -620,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> {
       await AnalyticsService.instance.logNotificationScheduled();
       await NotificationService.instance.showInstantNotification(
         title: 'Daily Journal Reminder',
-        body: 'Don\'t forget to write in your journal today! 📔',
+        body: 'Don\'t forget to write in your journal today!',
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
