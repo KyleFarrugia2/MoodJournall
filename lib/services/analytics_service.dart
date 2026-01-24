@@ -13,7 +13,7 @@ class AnalyticsService {
       _analytics = FirebaseAnalytics.instance;
       debugPrint('Firebase Analytics initialized successfully');
       debugPrint('Analytics service is ready to track events');
-      
+
       try {
         await _analytics!.logEvent(name: 'app_opened');
         debugPrint('Test analytics event sent successfully');
@@ -26,7 +26,7 @@ class AnalyticsService {
       _analytics = null;
     }
   }
-  
+
   bool get isConnected {
     try {
       return _analytics != null;

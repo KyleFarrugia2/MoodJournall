@@ -91,11 +91,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'Firebase connection status',
                         child: Builder(
                           builder: (context) {
-                            final isConnected = AnalyticsService.instance.isConnected;
+                            final isConnected =
+                                AnalyticsService.instance.isConnected;
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Icon(
-                                isConnected ? Icons.cloud_done : Icons.cloud_off,
+                                isConnected
+                                    ? Icons.cloud_done
+                                    : Icons.cloud_off,
                                 color: isConnected ? Colors.green : Colors.grey,
                               ),
                             );
@@ -269,7 +272,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 80,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.2),
                 ),
                 child: Center(
                   child: Text(
