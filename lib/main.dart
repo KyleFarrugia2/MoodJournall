@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:io' show Platform;
 import 'providers/journal_provider.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
@@ -12,12 +13,16 @@ void main() async {
 
   await DatabaseHelper.initializeDatabaseFactory();
 
-  try {
-    await Firebase.initializeApp();
-    debugPrint('Firebase initialized successfully');
-  } catch (e) {
-    debugPrint('Firebase initialization skipped (optional): $e');
-    debugPrint('App will continue without Firebase Analytics');
+  if (Platform.isAndroid || Platform.isIOS) {
+    try {
+      await Firebase.initializeApp();
+      debugPrint('Firebase initialized successfully');
+    } catch (e) {
+      debugPrint('Firebase initialization skipped (optional): $e');
+      debugPrint('App will continue without Firebase Analytics');
+    }
+  } else {
+    debugPrint('Firebase Analytics not available on Windows/Web/Linux');
   }
 
   await NotificationService.instance.initialize();

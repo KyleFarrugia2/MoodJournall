@@ -1,5 +1,6 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart' show debugPrint;
+import 'dart:io' show Platform;
 import '../models/journal_entry.dart';
 
 class AnalyticsService {
@@ -9,6 +10,11 @@ class AnalyticsService {
   AnalyticsService._init();
 
   Future<void> initialize() async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isWeb) {
+      debugPrint('Firebase Analytics not available on desktop/web platforms');
+      _analytics = null;
+      return;
+    }
     try {
       _analytics = FirebaseAnalytics.instance;
       debugPrint('Firebase Analytics initialized successfully');
