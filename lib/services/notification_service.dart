@@ -51,8 +51,7 @@ class NotificationService {
         ?.requestNotificationsPermission();
   }
 
-  void _onNotificationTapped(NotificationResponse response) {
-  }
+  void _onNotificationTapped(NotificationResponse response) {}
 
   Future<void> scheduleDailyReminder() async {
     try {
@@ -63,8 +62,7 @@ class NotificationService {
       }
 
       final now = DateTime.now();
-      final scheduledTime =
-          DateTime(now.year, now.month, now.day, 20, 0);
+      final scheduledTime = DateTime(now.year, now.month, now.day, 20, 0);
 
       final targetTime = scheduledTime.isBefore(now)
           ? scheduledTime.add(const Duration(days: 1))
@@ -98,8 +96,7 @@ class NotificationService {
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents:
-            DateTimeComponents.time,
+        matchDateTimeComponents: DateTimeComponents.time,
       );
     } catch (e) {
       debugPrint('Could not schedule daily reminder: $e');

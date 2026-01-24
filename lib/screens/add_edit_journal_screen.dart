@@ -118,7 +118,8 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Could not get location. Please check permissions.'),
+              content:
+                  Text('Could not get location. Please check permissions.'),
               backgroundColor: Colors.orange,
             ),
           );
@@ -140,16 +141,16 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   }
 
   void _saveEntry() async {
-      if (_formKey.currentState!.validate()) {
-        if (_selectedDate == null || _selectedTime == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please select date and time'),
-              backgroundColor: Colors.orange,
-            ),
-          );
-          return;
-        }
+    if (_formKey.currentState!.validate()) {
+      if (_selectedDate == null || _selectedTime == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please select date and time'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
 
       final entryDate = DateTime(
         _selectedDate!.year,
@@ -254,7 +255,6 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   textInputAction: TextInputAction.next,
                 ),
                 const SizedBox(height: 16),
-
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
@@ -267,9 +267,10 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                       children: [
                         Text(
                           'How are you feeling?',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 16),
                         Row(
@@ -326,7 +327,6 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 TextFormField(
                   controller: _contentController,
                   decoration: InputDecoration(
@@ -348,7 +348,6 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
@@ -367,7 +366,6 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
@@ -386,7 +384,6 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
@@ -403,7 +400,10 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'Location',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -423,8 +423,9 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                           children: [
                             Expanded(
                               child: ElevatedButton.icon(
-                                onPressed:
-                                    _isLoadingLocation ? null : _getCurrentLocation,
+                                onPressed: _isLoadingLocation
+                                    ? null
+                                    : _getCurrentLocation,
                                 icon: _isLoadingLocation
                                     ? const SizedBox(
                                         width: 16,
@@ -434,9 +435,12 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                                         ),
                                       )
                                     : const Icon(Icons.my_location),
-                                label: Text(_isLoadingLocation ? 'Getting...' : 'Get GPS'),
+                                label: Text(_isLoadingLocation
+                                    ? 'Getting...'
+                                    : 'Get GPS'),
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
                                 ),
                               ),
                             ),
@@ -460,7 +464,6 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
-
                 ElevatedButton(
                   onPressed: _saveEntry,
                   style: ElevatedButton.styleFrom(
@@ -471,7 +474,8 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                   ),
                   child: Text(
                     widget.entry == null ? 'Create Entry' : 'Update Entry',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

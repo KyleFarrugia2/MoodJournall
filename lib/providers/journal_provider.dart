@@ -25,7 +25,9 @@ class JournalProvider with ChangeNotifier {
     final now = DateTime.now();
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
     weekStart.copyWith(hour: 0, minute: 0, second: 0, millisecond: 0);
-    return _entries.where((entry) => entry.entryDate.isAfter(weekStart)).toList();
+    return _entries
+        .where((entry) => entry.entryDate.isAfter(weekStart))
+        .toList();
   }
 
   double get averageMoodThisWeek {

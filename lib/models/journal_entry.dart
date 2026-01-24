@@ -52,9 +52,15 @@ class JournalEntry {
       mood: Mood.fromValue(map['moodValue'] as int),
       entryDate: DateTime.parse(map['entryDate'] as String),
       locationName: map['locationName'] as String?,
-      latitude: map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
-      longitude: map['longitude'] != null ? (map['longitude'] as num).toDouble() : null,
-      tags: (map['tags'] as String? ?? '').split(',').where((t) => t.isNotEmpty).toList(),
+      latitude:
+          map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
+      longitude: map['longitude'] != null
+          ? (map['longitude'] as num).toDouble()
+          : null,
+      tags: (map['tags'] as String? ?? '')
+          .split(',')
+          .where((t) => t.isNotEmpty)
+          .toList(),
       createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
     );

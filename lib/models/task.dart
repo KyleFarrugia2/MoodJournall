@@ -46,8 +46,11 @@ class Task {
       dueDate: DateTime.parse(map['dueDate'] as String),
       isCompleted: (map['isCompleted'] as int) == 1,
       locationName: map['locationName'] as String?,
-      latitude: map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
-      longitude: map['longitude'] != null ? (map['longitude'] as num).toDouble() : null,
+      latitude:
+          map['latitude'] != null ? (map['latitude'] as num).toDouble() : null,
+      longitude: map['longitude'] != null
+          ? (map['longitude'] as num).toDouble()
+          : null,
       createdAt: DateTime.parse(map['createdAt'] as String),
       updatedAt: DateTime.parse(map['updatedAt'] as String),
     );
