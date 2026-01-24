@@ -402,7 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Semantics(
         label:
-            'Journal entry: ${entry.title}. Mood: ${entry.mood.label}. Content: ${entry.content.length > 50 ? entry.content.substring(0, 50) + '...' : entry.content}. Tap to edit',
+            'Journal entry: ${entry.title}. Mood: ${entry.mood.label}. Content: ${entry.content.length > 50 ? '${entry.content.substring(0, 50)}...' : entry.content}. Tap to edit',
         button: true,
         hint: 'Double tap to edit this journal entry',
         child: InkWell(
