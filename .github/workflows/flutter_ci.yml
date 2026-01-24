@@ -1,6 +1,3 @@
-# GitHub Actions CI/CD Workflow for Flutter Application
-# This implements A&A5 - CI/CD Pipeline
-
 name: Flutter CI/CD Pipeline
 
 on:
@@ -8,10 +5,9 @@ on:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master, develop ]
-  workflow_dispatch: # Allows manual triggering
+  workflow_dispatch:
 
 jobs:
-  # Job 1: Code Analysis and Linting
   analyze:
     name: Code Analysis
     runs-on: ubuntu-latest
@@ -37,7 +33,6 @@ jobs:
       - name: Run tests
         run: flutter test
 
-  # Job 2: Build Windows (No Java Required)
   build-windows:
     name: Build Windows
     runs-on: windows-latest
@@ -65,12 +60,11 @@ jobs:
           path: build/windows/x64/runner/Release
           retention-days: 30
 
-  # Job 2b: Build Android APK (Optional - Requires Java)
   build-android:
     name: Build Android APK
     runs-on: ubuntu-latest
     needs: analyze
-    if: false  # Set to true if you want Android builds
+    if: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,7 +94,6 @@ jobs:
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
 
-  # Job 3: Build iOS (macOS required)
   build-ios:
     name: Build iOS
     runs-on: macos-latest
@@ -118,7 +111,7 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
       
-      - name: Build iOS (without code signing)
+      - name: Build iOS
         run: flutter build ios --release --no-codesign
       
       - name: Upload iOS build artifact
@@ -128,7 +121,6 @@ jobs:
           path: build/ios/iphoneos/Runner.app
           retention-days: 30
 
-  # Job 4: Build Web
   build-web:
     name: Build Web
     runs-on: ubuntu-latest
@@ -158,20 +150,3 @@ jobs:
           name: web-build
           path: build/web
           retention-days: 30
-
-# Workflow Description:
-# This CI/CD pipeline automatically runs when code is pushed or pull requests are created.
-# It performs the following actions:
-# 1. Code Analysis: Checks code formatting, runs static analysis, and executes tests
-# 2. Windows Build: Creates a release build for Windows (NO JAVA REQUIRED)
-# 3. Web Build: Creates a production web build (NO JAVA REQUIRED)
-# 4. Android Build: Optional - Creates a release APK (requires Java, disabled by default)
-# 5. iOS Build: Creates a release build for iOS (requires macOS runner)
-#
-# Benefits:
-# - Catches errors early in the development process
-# - Ensures code quality standards are maintained
-# - Automatically builds deployable artifacts
-# - Provides fast feedback to developers
-# - Supports multiple platforms simultaneously
-# - Windows and Web builds work WITHOUT Java installation
