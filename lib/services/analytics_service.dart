@@ -1,5 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'dart:io' show Platform;
 import '../models/journal_entry.dart';
 
@@ -10,7 +10,7 @@ class AnalyticsService {
   AnalyticsService._init();
 
   Future<void> initialize() async {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS || Platform.isWeb) {
+    if (kIsWeb || (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS))) {
       debugPrint('Firebase Analytics not available on desktop/web platforms');
       _analytics = null;
       return;
