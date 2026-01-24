@@ -22,8 +22,8 @@ class AnalyticsService {
 
       await _analytics!.setAnalyticsCollectionEnabled(true);
 
-      await _analytics!
-          .setUserId(id: DateTime.now().millisecondsSinceEpoch.toString());
+      final userId = DateTime.now().millisecondsSinceEpoch.toString();
+      await _analytics!.setUserId(id: userId);
 
       await _analytics!.setUserProperty(name: 'app_version', value: '2.0.0');
       await _analytics!.setUserProperty(
@@ -31,12 +31,26 @@ class AnalyticsService {
 
       debugPrint('Firebase Analytics initialized successfully');
       debugPrint('Analytics service is ready to track events');
-      debugPrint('User ID set for tracking');
+      debugPrint('User ID set: $userId');
+      debugPrint('Analytics collection enabled: true');
+
+      await Future.delayed(const Duration(milliseconds: 500));
 
       try {
         await _analytics!.logEvent(name: 'app_opened');
         await _analytics!.logAppOpen();
         debugPrint('App opened event sent successfully');
+
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        await _analytics!.logEvent(
+          name: 'first_open',
+          parameters: {
+            'user_id': userId,
+            'platform': Platform.isAndroid ? 'android' : 'ios',
+          },
+        );
+        debugPrint('First open event sent successfully');
       } catch (e) {
         debugPrint('Could not send app opened event: $e');
       }
@@ -59,9 +73,12 @@ class AnalyticsService {
     if (_analytics != null) {
       try {
         await _analytics!.logScreenView(screenName: screenName);
+        debugPrint('Screen view logged: $screenName');
       } catch (e) {
         debugPrint('Error logging screen view: $e');
       }
+    } else {
+      debugPrint('Analytics not available - cannot log screen view');
     }
   }
 
@@ -80,14 +97,19 @@ class AnalyticsService {
     bool? hasLocation,
   }) async {
     if (_analytics != null) {
-      await _analytics!.logEvent(
-        name: 'journal_entry_created',
-        parameters: {
-          'mood': mood.label,
-          'mood_value': mood.value,
-          'has_location': hasLocation ?? false,
-        },
-      );
+      try {
+        await _analytics!.logEvent(
+          name: 'journal_entry_created',
+          parameters: {
+            'mood': mood.label,
+            'mood_value': mood.value,
+            'has_location': hasLocation ?? false,
+          },
+        );
+        debugPrint('Journal entry created event logged');
+      } catch (e) {
+        debugPrint('Error logging journal entry created: $e');
+      }
     }
   }
 
@@ -175,6 +197,25 @@ class AnalyticsService {
   Future<void> logNotificationTested() async {
     if (_analytics != null) {
       await _analytics!.logEvent(name: 'notification_tested');
+    }
+  }
+
+  Future<void> testAnalytics() async {
+    if (_analytics != null) {
+      try {
+        await _analytics!.logEvent(
+          name: 'analytics_test',
+          parameters: {
+            'timestamp': DateTime.now().toIso8601String(),
+            'test': true,
+          },
+        );
+        debugPrint('Test analytics event sent');
+      } catch (e) {
+        debugPrint('Error sending test analytics event: $e');
+      }
+    } else {
+      debugPrint('Analytics not initialized - cannot send test event');
     }
   }
 
