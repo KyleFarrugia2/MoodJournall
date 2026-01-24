@@ -19,8 +19,19 @@ class AnalyticsService {
     }
     try {
       _analytics = FirebaseAnalytics.instance;
+
+      await _analytics!.setAnalyticsCollectionEnabled(true);
+
+      await _analytics!
+          .setUserId(id: DateTime.now().millisecondsSinceEpoch.toString());
+
+      await _analytics!.setUserProperty(name: 'app_version', value: '2.0.0');
+      await _analytics!.setUserProperty(
+          name: 'platform', value: Platform.isAndroid ? 'android' : 'ios');
+
       debugPrint('Firebase Analytics initialized successfully');
       debugPrint('Analytics service is ready to track events');
+      debugPrint('User ID set for tracking');
 
       try {
         await _analytics!.logEvent(name: 'app_opened');
@@ -46,7 +57,21 @@ class AnalyticsService {
 
   Future<void> logScreenView(String screenName) async {
     if (_analytics != null) {
-      await _analytics!.logScreenView(screenName: screenName);
+      try {
+        await _analytics!.logScreenView(screenName: screenName);
+      } catch (e) {
+        debugPrint('Error logging screen view: $e');
+      }
+    }
+  }
+
+  Future<void> logSessionStart() async {
+    if (_analytics != null) {
+      try {
+        await _analytics!.logEvent(name: 'session_start');
+      } catch (e) {
+        debugPrint('Error logging session start: $e');
+      }
     }
   }
 

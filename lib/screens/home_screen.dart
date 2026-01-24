@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<JournalProvider>().loadEntries();
       AnalyticsService.instance.logScreenView('home_screen');
+      AnalyticsService.instance.logSessionStart();
     });
   }
 
