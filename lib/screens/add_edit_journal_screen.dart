@@ -54,14 +54,16 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final contextBeforeAsync = context;
     await AnalyticsService.instance.logDatePickerOpened();
+    if (!mounted) return;
     final DateTime? picked = await showDatePicker(
-      context: context,
+      context: contextBeforeAsync,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         _selectedDate = picked;
       });
@@ -69,12 +71,14 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
+    final contextBeforeAsync = context;
     await AnalyticsService.instance.logTimePickerOpened();
+    if (!mounted) return;
     final TimeOfDay? picked = await showTimePicker(
-      context: context,
+      context: contextBeforeAsync,
       initialTime: _selectedTime ?? TimeOfDay.now(),
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         _selectedTime = picked;
       });
@@ -145,8 +149,10 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   void _saveEntry() async {
     await AnalyticsService.instance
         .logSaveButtonClicked('add_edit_journal_screen');
+    if (!mounted) return;
     if (_formKey.currentState!.validate()) {
       if (_selectedDate == null || _selectedTime == null) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please select date and time'),
@@ -178,6 +184,7 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
       );
 
       try {
+        if (!mounted) return;
         final journalProvider = context.read<JournalProvider>();
         if (widget.entry == null) {
           await journalProvider.addEntry(entry);
@@ -185,28 +192,27 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
           await journalProvider.updateEntry(entry);
         }
 
-        if (mounted) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                widget.entry == null
-                    ? 'Entry created successfully!'
-                    : 'Entry updated successfully!',
-              ),
-              backgroundColor: Colors.green,
+        if (!mounted) return;
+        Navigator.pop(context);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.entry == null
+                  ? 'Entry created successfully!'
+                  : 'Entry updated successfully!',
             ),
-          );
-        }
+            backgroundColor: Colors.green,
+          ),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error saving entry: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving entry: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
