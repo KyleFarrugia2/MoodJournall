@@ -16,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _chartTracked = false;
+
   @override
   void initState() {
     super.initState();
@@ -321,6 +323,10 @@ class _HomeScreenState extends State<HomeScreen> {
     BuildContext context,
     List<JournalEntry> weekEntries,
   ) {
+    if (!_chartTracked && weekEntries.isNotEmpty) {
+      AnalyticsService.instance.logChartViewed('weekly_mood_trend');
+      _chartTracked = true;
+    }
     final Map<int, double> dailyMoods = {};
     final now = DateTime.now();
 
@@ -591,6 +597,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToEditEntry(BuildContext context, JournalEntry entry) {
+    if (entry.id != null) {
+      AnalyticsService.instance.logJournalEntryViewed(entry.id!);
+    }
     final provider = context.read<JournalProvider>();
     Navigator.push(
       context,
@@ -636,7 +645,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _testNotification() async {
     try {
-      await AnalyticsService.instance.logNotificationScheduled();
+      await AnalyticsService.instance.logNotificationTested();
       await NotificationService.instance.showInstantNotification(
         title: 'Daily Journal Reminder',
         body: 'Don\'t forget to write in your journal today!',

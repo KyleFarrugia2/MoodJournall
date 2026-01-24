@@ -54,6 +54,7 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    await AnalyticsService.instance.logDatePickerOpened();
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
@@ -68,6 +69,7 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
+    await AnalyticsService.instance.logTimePickerOpened();
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
@@ -141,6 +143,8 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
   }
 
   void _saveEntry() async {
+    await AnalyticsService.instance
+        .logSaveButtonClicked('add_edit_journal_screen');
     if (_formKey.currentState!.validate()) {
       if (_selectedDate == null || _selectedTime == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -282,6 +286,7 @@ class _AddEditJournalScreenState extends State<AddEditJournalScreen> {
                                 setState(() {
                                   _selectedMood = mood;
                                 });
+                                AnalyticsService.instance.logMoodSelected(mood);
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(12),
