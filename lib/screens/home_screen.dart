@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               final entries = journalProvider.entries;
               final todayEntries = journalProvider.todayEntries;
+              final weekEntries = journalProvider.weekEntries;
               final averageMood = journalProvider.averageMoodThisWeek;
 
               return CustomScrollView(
@@ -127,14 +128,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           context, averageMood, todayEntries.length),
                     ),
                   ),
-                  if (journalProvider.weekEntries.isNotEmpty)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: _buildWeeklyMoodChart(
-                            context, journalProvider.weekEntries),
-                      ),
+                  SliverToBoxAdapter(
+                    child: Builder(
+                      builder: (context) {
+                        debugPrint(
+                            'Rendering weekly chart section with ${weekEntries.length} entries');
+                        return Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+                          child: _buildWeeklyMoodChart(context, weekEntries),
+                        );
+                      },
                     ),
+                  ),
                   if (todayEntries.isNotEmpty)
                     SliverToBoxAdapter(
                       child: Padding(
@@ -329,15 +335,25 @@ class _HomeScreenState extends State<HomeScreen> {
       AnalyticsService.instance.logChartViewed('weekly_mood_trend');
       _chartTracked = true;
     }
-    final Map<int, double> dailyMoods = {};
+
+    debugPrint(
+        'Building weekly mood chart with ${weekEntries.length} week entries');
+
+    final Map<int, double?> dailyMoods = {};
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
     for (int i = 0; i < 7; i++) {
-      final date = now.subtract(Duration(days: i));
+      final date = today.subtract(Duration(days: i));
       final dayEntries = weekEntries.where((e) {
-        return e.entryDate.year == date.year &&
-            e.entryDate.month == date.month &&
-            e.entryDate.day == date.day;
+        final entryDate = DateTime(
+          e.entryDate.year,
+          e.entryDate.month,
+          e.entryDate.day,
+        );
+        return entryDate.year == date.year &&
+            entryDate.month == date.month &&
+            entryDate.day == date.day;
       }).toList();
 
       if (dayEntries.isNotEmpty) {
@@ -347,66 +363,133 @@ class _HomeScreenState extends State<HomeScreen> {
             ) /
             dayEntries.length;
         dailyMoods[6 - i] = avg;
+      } else {
+        dailyMoods[6 - i] = null;
       }
     }
 
-    if (dailyMoods.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    final hasAnyData = dailyMoods.values.any((value) => value != null);
+    debugPrint(
+        'Weekly chart - hasAnyData: $hasAnyData, dailyMoods: $dailyMoods');
 
     return Semantics(
-      label: 'Weekly mood trend chart showing mood over the past 7 days',
+      label: hasAnyData
+          ? 'Weekly mood trend chart showing mood over the past 7 days'
+          : 'Weekly mood trend chart - no data available',
       child: Card(
+        key: const ValueKey('weekly_mood_chart'),
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Padding(
+        child: Container(
+          width: double.infinity,
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Semantics(
-                label: 'Weekly Mood Trend',
-                header: true,
-                child: Text(
-                  'Weekly Mood Trend',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+              Text(
+                'Weekly Mood Trend',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                height: 200,
-                child: LineChart(
-                  LineChartData(
-                    gridData: FlGridData(show: false),
-                    titlesData: FlTitlesData(show: false),
-                    borderData: FlBorderData(show: false),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: dailyMoods.entries.map((e) {
-                          return FlSpot(e.key.toDouble(), e.value);
-                        }).toList(),
-                        isCurved: true,
-                        color: Theme.of(context).colorScheme.primary,
-                        barWidth: 3,
-                        dotData: FlDotData(show: true),
-                        belowBarData: BarAreaData(
-                          show: true,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.1),
+              if (!hasAnyData)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40.0),
+                    child: Text(
+                      'No entries in the last 7 days',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                    ),
+                  ),
+                )
+              else
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final chartSpots = dailyMoods.entries
+                        .where((e) => e.value != null)
+                        .map((e) => FlSpot(e.key.toDouble(), e.value!))
+                        .toList();
+
+                    if (chartSpots.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return RepaintBoundary(
+                      child: Container(
+                        height: 200,
+                        width: constraints.maxWidth > 0
+                            ? constraints.maxWidth
+                            : double.infinity,
+                        constraints: const BoxConstraints(
+                          minHeight: 200,
+                          maxHeight: 200,
+                        ),
+                        child: LineChart(
+                          LineChartData(
+                            gridData:
+                                FlGridData(show: true, drawVerticalLine: false),
+                            titlesData: FlTitlesData(
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitlesWidget: (value, meta) {
+                                    final daysAgo = 6 - value.toInt();
+                                    if (daysAgo < 0 || daysAgo > 6) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final date =
+                                        today.subtract(Duration(days: daysAgo));
+                                    return Text(
+                                      DateFormat('E').format(date),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey[600],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(show: false),
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: chartSpots,
+                                isCurved: true,
+                                color: Theme.of(context).colorScheme.primary,
+                                barWidth: 3,
+                                dotData: FlDotData(show: true),
+                                belowBarData: BarAreaData(
+                                  show: true,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.1),
+                                ),
+                              ),
+                            ],
+                            minY: 0,
+                            maxY: 4,
+                          ),
                         ),
                       ),
-                    ],
-                    minY: 0,
-                    maxY: 4,
-                  ),
+                    );
+                  },
                 ),
-              ),
             ],
           ),
         ),

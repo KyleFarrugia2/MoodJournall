@@ -23,10 +23,18 @@ class JournalProvider with ChangeNotifier {
 
   List<JournalEntry> get weekEntries {
     final now = DateTime.now();
-    final weekStart = now.subtract(Duration(days: now.weekday - 1));
-    weekStart.copyWith(hour: 0, minute: 0, second: 0, millisecond: 0);
+    final weekStart = DateTime(now.year, now.month, now.day)
+        .subtract(const Duration(days: 7));
     return _entries
-        .where((entry) => entry.entryDate.isAfter(weekStart))
+        .where((entry) {
+          final entryDate = DateTime(
+            entry.entryDate.year,
+            entry.entryDate.month,
+            entry.entryDate.day,
+          );
+          return entryDate.isAfter(weekStart) || 
+                 entryDate.isAtSameMomentAs(weekStart);
+        })
         .toList();
   }
 

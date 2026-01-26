@@ -1,5 +1,5 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb, kDebugMode;
 import 'dart:io' show Platform;
 import '../models/journal_entry.dart';
 
@@ -21,6 +21,14 @@ class AnalyticsService {
       _analytics = FirebaseAnalytics.instance;
 
       await _analytics!.setAnalyticsCollectionEnabled(true);
+      
+      if (kDebugMode) {
+        await _analytics!.setAnalyticsCollectionEnabled(true);
+        debugPrint('Firebase Analytics Debug Mode: Enabled');
+        debugPrint('To view events in real-time:');
+        debugPrint('1. Open Firebase Console > Analytics > DebugView');
+        debugPrint('2. Run: adb shell setprop debug.firebase.analytics.app com.moodjournal.app');
+      }
 
       final userId = DateTime.now().millisecondsSinceEpoch.toString();
       await _analytics!.setUserId(id: userId);
@@ -40,17 +48,6 @@ class AnalyticsService {
         await _analytics!.logEvent(name: 'app_opened');
         await _analytics!.logAppOpen();
         debugPrint('App opened event sent successfully');
-
-        await Future.delayed(const Duration(milliseconds: 100));
-
-        await _analytics!.logEvent(
-          name: 'first_open',
-          parameters: {
-            'user_id': userId,
-            'platform': Platform.isAndroid ? 'android' : 'ios',
-          },
-        );
-        debugPrint('First open event sent successfully');
       } catch (e) {
         debugPrint('Could not send app opened event: $e');
       }
@@ -85,7 +82,7 @@ class AnalyticsService {
   Future<void> logSessionStart() async {
     if (_analytics != null) {
       try {
-        await _analytics!.logEvent(name: 'session_start');
+        await _analytics!.logEvent(name: 'user_session_start');
       } catch (e) {
         debugPrint('Error logging session start: $e');
       }
@@ -207,7 +204,7 @@ class AnalyticsService {
           name: 'analytics_test',
           parameters: {
             'timestamp': DateTime.now().toIso8601String(),
-            'test': true,
+            'test_status': 'success',
           },
         );
         debugPrint('Test analytics event sent');
