@@ -21,13 +21,14 @@ class AnalyticsService {
       _analytics = FirebaseAnalytics.instance;
 
       await _analytics!.setAnalyticsCollectionEnabled(true);
-      
+
       if (kDebugMode) {
         await _analytics!.setAnalyticsCollectionEnabled(true);
         debugPrint('Firebase Analytics Debug Mode: Enabled');
         debugPrint('To view events in real-time:');
         debugPrint('1. Open Firebase Console > Analytics > DebugView');
-        debugPrint('2. Run: adb shell setprop debug.firebase.analytics.app com.moodjournal.app');
+        debugPrint(
+            '2. Run: adb shell setprop debug.firebase.analytics.app com.moodjournal.app');
       }
 
       final userId = DateTime.now().millisecondsSinceEpoch.toString();

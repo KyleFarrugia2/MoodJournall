@@ -25,17 +25,15 @@ class JournalProvider with ChangeNotifier {
     final now = DateTime.now();
     final weekStart = DateTime(now.year, now.month, now.day)
         .subtract(const Duration(days: 7));
-    return _entries
-        .where((entry) {
-          final entryDate = DateTime(
-            entry.entryDate.year,
-            entry.entryDate.month,
-            entry.entryDate.day,
-          );
-          return entryDate.isAfter(weekStart) || 
-                 entryDate.isAtSameMomentAs(weekStart);
-        })
-        .toList();
+    return _entries.where((entry) {
+      final entryDate = DateTime(
+        entry.entryDate.year,
+        entry.entryDate.month,
+        entry.entryDate.day,
+      );
+      return entryDate.isAfter(weekStart) ||
+          entryDate.isAtSameMomentAs(weekStart);
+    }).toList();
   }
 
   double get averageMoodThisWeek {
