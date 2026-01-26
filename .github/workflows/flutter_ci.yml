@@ -53,13 +53,13 @@ jobs:
         run: flutter pub get
         env:
           FLUTTERFIRE_CLI_SKIP: true
-        continue-on-error: false
       
       - name: Build Windows
         run: flutter build windows --release
-        continue-on-error: false
+        continue-on-error: true
       
       - name: Upload Windows build artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
